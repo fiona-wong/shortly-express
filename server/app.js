@@ -17,14 +17,24 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 
 
-app.get('/', 
+app.get('/',
 (req, res) => {
   res.render('index');
 });
 
-app.get('/create', 
+app.get('/create', Auth.createSession,
 (req, res) => {
   res.render('index');
+});
+
+app.get('/signup',
+(req, res) => {
+  res.render('./signup.ejs');
+});
+
+app.get('/login',
+(req, res) => {
+  res.render('./login.ejs');
 });
 
 app.get('/links', 
@@ -79,7 +89,26 @@ app.post('/links',
 /************************************************************/
 
 
+app.post('/signup', (req, res, next) => {
+  models.Users.create({username: req.body.username, password: req.body.password}).then(() =>{
+    res.redirect('/');
+  }).catch(() => {
+    res.redirect('/signup');
+  }); 
+});
 
+
+app.post('/login', (req, res, next) => {
+  models.Users.get({username: req.body.username}).then((results) =>{
+    if (results === undefined || !models.Users.compare(req.body.password, results.password, results.salt)) {
+      res.redirect('/login');
+    } else {
+      res.redirect('/');
+    }
+  }).catch((error) => {
+    throw error;
+  }); 
+});
 /************************************************************/
 // Handle the code parameter route last - if all other routes fail
 // assume the route is a short code and try and handle it here.
