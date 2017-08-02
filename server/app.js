@@ -17,12 +17,12 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 
 
-app.get('/',
+app.get('/', Auth.createSession,
 (req, res) => {
   res.render('index');
 });
 
-app.get('/create', Auth.createSession,
+app.get('/create',
 (req, res) => {
   res.render('index');
 });
@@ -32,7 +32,7 @@ app.get('/signup',
   res.render('./signup.ejs');
 });
 
-app.get('/login',
+app.get('/login', 
 (req, res) => {
   res.render('./login.ejs');
 });
